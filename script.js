@@ -1,5 +1,30 @@
 const API_URL = "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,weathercode&timezone=auto";
 
+// Emojis per le condizioni meteo
+const weatherEmojis = {
+    0: "☀️",   // Soleggiato
+    1: "🌤️",   // Prevalentemente soleggiato
+    2: "⛅",    // Parzialmente nuvoloso
+    3: "☁️",    // Nuvoloso
+    45: "🌫️",   // Nebbia leggera
+    48: "🌫️",   // Nebbia
+    51: "🌧️",   // Pioviggine leggera
+    53: "🌧️",   // Pioviggine moderata
+    55: "🌧️",   // Pioviggine intensa
+    61: "🌧️",   // Pioggia leggera
+    63: "🌧️",   // Pioggia moderata
+    65: "🌧️",   // Pioggia intensa
+    71: "❄️",    // Neve leggera
+    73: "❄️",    // Neve moderata
+    75: "❄️",    // Neve intensa
+    95: "⛈️",    // Temporale
+    96: "⛈️"     // Temporale con grandine
+};
+
+function getWeatherEmoji(weatherCode) {
+    return weatherEmojis[weatherCode] || "🌥️";  // Default emoji se non riconosciuto
+}
+
 async function getWeather() {
     const city = document.getElementById("city").value;
     if (!city) {
@@ -70,7 +95,8 @@ function displayForecast(hourlyData) {
             time,
             temperature: temperatures[i],
             precipitation: precipitations[i],
-            weatherDescription: weatherDescriptions[weatherCodes[i]] || "Condizioni sconosciute"
+            weatherDescription: weatherDescriptions[weatherCodes[i]] || "Condizioni sconosciute",
+            weatherEmoji: getWeatherEmoji(weatherCodes[i]) // Emoji per la condizione meteo
         });
     }
 
@@ -95,7 +121,7 @@ function displayForecast(hourlyData) {
                             <td>${row.time}</td>
                             <td>${row.temperature}</td>
                             <td>${row.precipitation}</td>
-                            <td>${row.weatherDescription}</td>
+                            <td>${row.weatherDescription} ${row.weatherEmoji}</td>
                         </tr>
                     `).join('')}
                 </tbody>
